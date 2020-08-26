@@ -4,8 +4,8 @@ import one from '../images/one.jpg'
 import two from '../images/one.jpg'
 import tree from '../images/one.jpg'
 import four from '../images/one.jpg'
-
-function Cart({basketProps}) {
+import {productQuantity} from '../actions/productQuantity'
+function Cart({basketProps,productQuantity}) {
     console.log(basketProps)
     let productsInCart =[]
     Object.keys(basketProps.products).forEach(function(item){
@@ -16,22 +16,36 @@ function Cart({basketProps}) {
         }
         console.log(productsInCart)
     })
-    const productImages=[one,two ,tree ,four ]
+    // const productImages=[one,two ,tree ,four ]
+    const productImages = (product) =>{
+      if(product.tagName ==="greyTshirt"){
+          return one;
+      }else if(product.tagName==="greyHoodie"){
+          return two;
+      }
+      else if(product.tagName==="blackTshirt"){
+        return tree;
+      }
+      else if(product.tagName==="blackHoddie"){
+        return four;
+      }
+    }
+
     productsInCart =productsInCart.map((product,index)=>{
          return (
-             <Fragment>
+             <Fragment key={index}>
                  <div className="product" >
                    <ion-icon name="close-circle"> </ion-icon> 
-                   <img src={productImages[index]}/>
+                   <img src={productImages(product)}/>
                    <span className="sm-hide">{product.numbers}</span>
                  </div>
                  <div className="price sm-hide">
                      ${product.price},00
                  </div>
                  <div className="quantity">
-                     <ion-icon className="decrease" name="arrow-back-circle-outline"> </ion-icon> 
+                     <ion-icon onClick={()=>productQuantity('decrease',product.tagName)} className="decrease" name="arrow-back-circle-outline"> </ion-icon> 
                          <span>{product.numbers}</span>
-                     <ion-icon className="increase" name="arrow-forward-circle-outline"> </ion-icon> 
+                     <ion-icon onClick={()=>productQuantity('increase',product.tagName)}    className="increase" name="arrow-forward-circle-outline"> </ion-icon> 
 
                  </div>
                  <div className="total">  ${product.numbers*product.price},00   </div>
@@ -65,4 +79,9 @@ function Cart({basketProps}) {
 const mapStateToProps=state =>({
      basketProps:state.basketState
 });
-export default connect(mapStateToProps)(Cart);
+export default connect(mapStateToProps,{productQuantity})(Cart);
+
+
+
+
+
